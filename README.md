@@ -10,6 +10,7 @@ Redis identifiable messages pubsub system for [redis](https://github.com/redis/n
 
 ```shell
 npm install @universal-packages/redis-pubsub
+npm install redis
 ```
 
 # RedisPubSub
