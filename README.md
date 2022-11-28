@@ -48,9 +48,9 @@ Additionally takes the following ones:
 - **`client`** `RedisClient`
   If you already have a client working in your app you can pass the instance here to not connect another client inside the `RedisPubSub` instance only a new subscription instance will be handled inside.
 - **`identifier`** `String`
-  This can be used to identify who is sending messages to other instances, we do not want unsolicited pubpicks.
+  This can be used to identify who is sending messages to other instances, we do not want unsolicited publishing.
 - **`ignoreSelfPublications`** `Boolean` `default: true`
-  Normaly you don't want your current process to hear the same messages it is publishing but in case you want for some resaon set this to `false`.
+  Normally you don't want your current process to hear the same messages it is publishing but in case you want that for some reason set this to `false`.
 
 ## .connect()
 
@@ -70,7 +70,7 @@ await RedisPubSub.disconnect()
 
 ## .psubscribe()
 
-Subscribe the instance to a patter of channels, it will then emmit to that pattern and to the exact channel for that a message was published.
+Subscribe the instance to a patter of channels, it will then emit to that pattern and to the exact channel for that a message was published.
 
 ```js
 await redisPubSub.psubscribe('channel*')
@@ -96,7 +96,7 @@ redisPubSub.on('channel*', (message) => {
 })
 
 redisPubSub.on('channelA', (message) => {
-  // It macthes channelA so it will receive it
+  // It matches channelA so it will receive it
 })
 ```
 
@@ -114,7 +114,7 @@ This library is developed in TypeScript and shipped fully typed.
 
 ## Contributing
 
-The development of this library in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving this library.
+The development of this library happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving this library.
 
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 - [Contributing Guide](./CONTRIBUTING.md)
