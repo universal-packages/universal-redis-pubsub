@@ -13,7 +13,7 @@ npm install @universal-packages/redis-pubsub
 npm install redis
 ```
 
-# RedisPubSub
+## RedisPubSub
 
 An instance of `RedisPubSub` allows you to start publishing messages to any channel and any other `RedisPubSub` instance connected to the same redis server will be able to receive them if they are subcribed.
 
@@ -39,7 +39,7 @@ redisPubSub.on('job', (message) => {
 })
 ```
 
-## Options
+### Options
 
 `RedisPubSub` takes the same [options](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md) as the redis client.
 
@@ -52,23 +52,17 @@ Additionally takes the following ones:
 - **`ignoreSelfPublications`** `Boolean` `default: true`
   Normally you don't want your current process to hear the same messages it is publishing but in case you want that for some reason set this to `false`.
 
-## .connect()
+### Instance methods
+
+#### **`connect()`**
 
 Connect the internal subscriptions client and the publish client in case it was not passed as option.
 
-```js
-await RedisPubSub.connect()
-```
-
-## .disconnect()
+#### **`disconnect()`**
 
 Disconnect the internal subscriptions client and the publish client in case it was not passed as option.
 
-```js
-await RedisPubSub.disconnect()
-```
-
-## .psubscribe()
+#### **`psubscribe(channel: string)`**
 
 Subscribe the instance to a patter of channels, it will then emit to that pattern and to the exact channel for that a message was published.
 
@@ -84,7 +78,7 @@ redisPubSub.on('channelA', (message) => {
 })
 ```
 
-## .subscribe()
+#### **`subscribe(channel: string)`**
 
 Subscribe the instance to specific channel or channels.
 
@@ -100,7 +94,7 @@ redisPubSub.on('channelA', (message) => {
 })
 ```
 
-## .publish()
+#### **`publish(channel: string, data: Object)`**
 
 Publish to the specific channel.
 
