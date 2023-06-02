@@ -1,7 +1,8 @@
-import { v4 as uuidV4 } from 'uuid'
-import { RedisMessage, RedisPubSubOptions } from './RedisPubSub.types'
-import { createClient, RedisClientType, RedisFunctions, RedisModules, RedisScripts } from 'redis'
 import EventEmitter from 'events'
+import { RedisClientType, RedisFunctions, RedisModules, RedisScripts, createClient } from 'redis'
+import { v4 as uuidV4 } from 'uuid'
+
+import { RedisMessage, RedisPubSubOptions } from './RedisPubSub.types'
 
 export default class RedisPubSub extends EventEmitter {
   public readonly options: RedisPubSubOptions
