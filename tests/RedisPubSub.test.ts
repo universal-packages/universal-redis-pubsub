@@ -8,7 +8,7 @@ afterEach(async (): Promise<void> => {
   await redisPubSubB.disconnect()
 })
 
-describe('RedisPubSub', (): void => {
+describe(RedisPubSub, (): void => {
   it('Publish and receives messages that are not being published by the same instance', async (): Promise<void> => {
     redisPubSubA = new RedisPubSub()
     redisPubSubB = new RedisPubSub()
@@ -20,35 +20,38 @@ describe('RedisPubSub', (): void => {
     await redisPubSubB.connect()
 
     await redisPubSubA.psubscribe('channel*')
-    await redisPubSubB.subscribe('channelA')
-    await redisPubSubB.subscribe('channelB')
 
-    redisPubSubA.on('channelA', receiverA)
-    redisPubSubB.on('channelA', receiverB)
-    redisPubSubA.on('channelB', receiverA)
-    redisPubSubB.on('channelB', receiverB)
-    redisPubSubA.on('channelC', receiverA)
-    redisPubSubB.on('channelC', receiverB)
+    await redisPubSubB.subscribe('channel1')
+    await redisPubSubB.subscribe('channel2')
 
-    await redisPubSubA.publish('channelA', { message: 'Hi A from A' })
-    await redisPubSubB.publish('channelA', { message: 'Hi A from B' })
-    await redisPubSubA.publish('channelB', { message: 'Hi B from A' })
-    await redisPubSubB.publish('channelB', { message: 'Hi B from B' })
-    await redisPubSubA.publish('channelC', { message: 'Hi C from A' })
-    await redisPubSubB.publish('channelC', { message: 'Hi C from B' })
+    redisPubSubA.on('channel1', receiverA)
+    redisPubSubA.on('channel2', receiverA)
+    redisPubSubA.on('channel3', receiverA)
+
+    redisPubSubB.on('channel1', receiverB)
+    redisPubSubB.on('channel2', receiverB)
+    redisPubSubB.on('channel3', receiverB)
+
+    await redisPubSubA.publish('channel1', { message: 'Hi 1 from A' })
+    await redisPubSubA.publish('channel2', { message: 'Hi 2 from A' })
+    await redisPubSubA.publish('channel3', { message: 'Hi 3 from A' })
+
+    await redisPubSubB.publish('channel1', { message: 'Hi 1 from B' })
+    await redisPubSubB.publish('channel2', { message: 'Hi 2 from B' })
+    await redisPubSubB.publish('channel3', { message: 'Hi 3 from B' })
 
     expect(receiverA.mock.calls).toEqual([
-      [{ payload: { message: 'Hi A from B' }, channel: 'channelA', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi B from B' }, channel: 'channelB', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi C from B' }, channel: 'channelC', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }]
+      [{ payload: { message: 'Hi 1 from B' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 2 from B' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 3 from B' }, channel: 'channel3', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }]
     ])
     expect(receiverB.mock.calls).toEqual([
-      [{ payload: { message: 'Hi A from A' }, channel: 'channelA', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi B from A' }, channel: 'channelB', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }]
+      [{ payload: { message: 'Hi 1 from A' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 2 from A' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }]
     ])
   })
 
-  it('Publish and receives all messages eben the ones from the same instance', async (): Promise<void> => {
+  it('Publish and receives all messages even the ones from the same instance', async (): Promise<void> => {
     redisPubSubA = new RedisPubSub({ ignoreSelfPublications: false })
     redisPubSubB = new RedisPubSub({ ignoreSelfPublications: false })
 
@@ -59,36 +62,36 @@ describe('RedisPubSub', (): void => {
     await redisPubSubB.connect()
 
     await redisPubSubA.psubscribe('channel*')
-    await redisPubSubB.subscribe('channelA')
-    await redisPubSubB.subscribe('channelB')
+    await redisPubSubB.subscribe('channel1')
+    await redisPubSubB.subscribe('channel2')
 
-    redisPubSubA.on('channelA', receiverA)
-    redisPubSubB.on('channelA', receiverB)
-    redisPubSubA.on('channelB', receiverA)
-    redisPubSubB.on('channelB', receiverB)
-    redisPubSubA.on('channelC', receiverA)
-    redisPubSubB.on('channelC', receiverB)
+    redisPubSubA.on('channel1', receiverA)
+    redisPubSubB.on('channel1', receiverB)
+    redisPubSubA.on('channel2', receiverA)
+    redisPubSubB.on('channel2', receiverB)
+    redisPubSubA.on('channel3', receiverA)
+    redisPubSubB.on('channel3', receiverB)
 
-    await redisPubSubA.publish('channelA', { message: 'Hi A from A' })
-    await redisPubSubB.publish('channelA', { message: 'Hi A from B' })
-    await redisPubSubA.publish('channelB', { message: 'Hi B from A' })
-    await redisPubSubB.publish('channelB', { message: 'Hi B from B' })
-    await redisPubSubA.publish('channelC', { message: 'Hi C from A' })
-    await redisPubSubB.publish('channelC', { message: 'Hi C from B' })
+    await redisPubSubA.publish('channel1', { message: 'Hi 1 from A' })
+    await redisPubSubB.publish('channel1', { message: 'Hi 1 from B' })
+    await redisPubSubA.publish('channel2', { message: 'Hi 2 from A' })
+    await redisPubSubB.publish('channel2', { message: 'Hi 2 from B' })
+    await redisPubSubA.publish('channel3', { message: 'Hi 3 from A' })
+    await redisPubSubB.publish('channel3', { message: 'Hi 3 from B' })
 
     expect(receiverA.mock.calls).toEqual([
-      [{ payload: { message: 'Hi A from A' }, channel: 'channelA', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi A from B' }, channel: 'channelA', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi B from A' }, channel: 'channelB', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi B from B' }, channel: 'channelB', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi C from A' }, channel: 'channelC', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi C from B' }, channel: 'channelC', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }]
+      [{ payload: { message: 'Hi 1 from A' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 1 from B' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 2 from A' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 2 from B' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 3 from A' }, channel: 'channel3', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 3 from B' }, channel: 'channel3', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }]
     ])
     expect(receiverB.mock.calls).toEqual([
-      [{ payload: { message: 'Hi A from A' }, channel: 'channelA', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi A from B' }, channel: 'channelA', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi B from A' }, channel: 'channelB', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
-      [{ payload: { message: 'Hi B from B' }, channel: 'channelB', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }]
+      [{ payload: { message: 'Hi 1 from A' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 1 from B' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 2 from A' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
+      [{ payload: { message: 'Hi 2 from B' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }]
     ])
   })
 })
