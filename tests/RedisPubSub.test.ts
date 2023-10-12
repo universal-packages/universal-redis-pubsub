@@ -40,6 +40,9 @@ describe(RedisPubSub, (): void => {
     await redisPubSubB.publish('channel2', { message: 'Hi 2 from B' })
     await redisPubSubB.publish('channel3', { message: 'Hi 3 from B' })
 
+    // We are working with actual redis here lets wait for it
+    await new Promise((resolve): NodeJS.Timeout => setTimeout(resolve, 200))
+
     expect(receiverA.mock.calls).toEqual([
       [{ payload: { message: 'Hi 1 from B' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
       [{ payload: { message: 'Hi 2 from B' }, channel: 'channel2', publisher: 'redis', publisherId: redisPubSubB.instanceId, processId: expect.any(Number) }],
@@ -78,6 +81,9 @@ describe(RedisPubSub, (): void => {
     await redisPubSubB.publish('channel2', { message: 'Hi 2 from B' })
     await redisPubSubA.publish('channel3', { message: 'Hi 3 from A' })
     await redisPubSubB.publish('channel3', { message: 'Hi 3 from B' })
+
+    // We are working with actual redis here lets wait for it
+    await new Promise((resolve): NodeJS.Timeout => setTimeout(resolve, 200))
 
     expect(receiverA.mock.calls).toEqual([
       [{ payload: { message: 'Hi 1 from A' }, channel: 'channel1', publisher: 'redis', publisherId: redisPubSubA.instanceId, processId: expect.any(Number) }],
